@@ -15,7 +15,8 @@ sql-test: build
 	GHC="$(GHC)" bash scripts/check.sh postgres
 
 install: build
-	install -Dm755 build/ontology "$(DESTDIR)$(PREFIX)/bin/ontology"
+	install -d "$(DESTDIR)$(PREFIX)/bin"
+	install -m 755 build/ontology "$(DESTDIR)$(PREFIX)/bin/ontology"
 
 clean:
 	rm -rf build dist-newstyle

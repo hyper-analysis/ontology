@@ -82,6 +82,9 @@ it does not connect to a database or generate sample data. Install the schema
 once, populate it, then execute compiled queries. Sets have no guaranteed
 transport order. See [O-SQL](docs/o-sql/README.md) for semantics and backend limits.
 
+For a complete runnable example, including seed data and the expected JSON result,
+follow the [quickstart](docs/quickstart.md).
+
 ## What it models
 
 - Declared semantic identity with `key`, separate from storage IDs.

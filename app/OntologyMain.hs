@@ -1,6 +1,7 @@
 module Main (main) where
 
 import Control.Exception (IOException, catch)
+import GHC.IO.Encoding (setFileSystemEncoding, setLocaleEncoding, utf8)
 import qualified Ontology.Parser as Ontology
 import Ontology.Check (checkOntology, ontologySummary)
 import Ontology.Relational (relational, relationalSummary)
@@ -13,7 +14,7 @@ import Postgres.Physical (program)
 import SQL.Render (renderProgram)
 import System.Environment (getArgs)
 import System.Exit (die)
-import System.IO (hPutStrLn, stderr)
+import System.IO (hPutStrLn, hSetEncoding, stdin, stdout, stderr)
 
 usage :: String
 usage = unlines
@@ -43,7 +44,11 @@ options (arg:rest) (Options files root ns)
   | otherwise = options rest (Options (files ++ [arg]) root ns)
 
 main :: IO ()
-main = run `catch` ioFailure
+main = do
+  setLocaleEncoding utf8
+  setFileSystemEncoding utf8
+  mapM_ (`hSetEncoding` utf8) [stdin, stdout, stderr]
+  run `catch` ioFailure
   where ioFailure :: IOException -> IO ()
         ioFailure = die . show
 

@@ -20,7 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install compiler dependencies
-        run: sudo apt-get update && sudo apt-get install -y ghc make cabal-install libghc-megaparsec-dev libghc-scientific-dev libghc-mtl-dev postgresql-client
+        run: sudo apt-get update && sudo apt-get install -y ghc make cabal-install libghc-megaparsec-dev libghc-scientific-dev libghc-mtl-dev postgresql-client python3
       - name: Unit and CLI checks
         run: make test
       - name: PostgreSQL execution checks
