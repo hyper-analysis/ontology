@@ -1,4 +1,4 @@
-# Ontology
+# Ontology — application compilation experiment
 
 **A semantic data modeling language that compiles to relational databases.**
 
@@ -33,6 +33,8 @@ ontology inspect examples/school.ontology --root School
 This produces independent Person and Course populations, a relation for course
 students, foreign keys for references, and uniqueness for declared semantic keys.
 See the [generated school schema](examples/school.sql).
+
+For the experimental application compiler, see [setup and scope](docs/app-compilation.md).
 
 ## Try it
 

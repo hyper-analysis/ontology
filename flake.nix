@@ -9,7 +9,7 @@
         let
           pkgs = import nixpkgs { inherit system; };
           compiler = pkgs.haskellPackages.ghcWithPackages (hs: with hs; [
-            containers megaparsec mtl scientific time
+            containers megaparsec mtl scientific time aeson bytestring text vector directory filepath
           ]);
         in { inherit pkgs compiler; };
     in {

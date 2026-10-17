@@ -1,0 +1,28 @@
+type Status = "active" | "paused";
+type OtherStatus = "active" | "paused";
+type Rank = 1 | 2;
+type Flag = true | false;
+type Address = { city: string; };
+type Pair = { key identity: { region: string; serial: number; }; };
+type Active = { note: string; contact: Ref<Person>; };
+type Empty = {};
+type Choice = alternative state { Active: Active; Empty: Empty; };
+type Person = {
+  key code: string;
+  name: string;
+  status: Status;
+  other: OtherStatus;
+  rank: Rank;
+  flag: Flag;
+  optional?: Status;
+  manager?: Ref<Person>;
+  pair?: Ref<Pair>;
+  first: Address;
+  second: Address;
+  tags: string[];
+  contacts: { kind: Status; value: string; }[];
+  work: (year: number) => { score: number; };
+  choice: Choice;
+};
+type Root = { people: Person[]; pairs: Pair[]; };
+

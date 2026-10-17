@@ -20,3 +20,11 @@ install: build
 clean:
 	rm -rf build dist-newstyle
 
+
+.PHONY: app app-test
+app:
+	mkdir -p build/app-obj
+	$(GHC) -O0 -Wall -Werror -isrc -outputdir build/app-obj app/ApplicationMain.hs -o build/ontology-app
+
+app-test: app
+	bash scripts/app-smoke.sh

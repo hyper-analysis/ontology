@@ -1,0 +1,13 @@
+html { font-family: system-ui, sans-serif; line-height: 1.5; }
+body { margin: 0; }
+main { max-width: 60rem; margin: 2rem auto; padding: 0 1rem; }
+h1 { font-size: 1.6rem; }
+dl { margin: 0; }
+dl > div { padding: 0.6rem 0; }
+dt { font-weight: 600; }
+dd { margin: 0.15rem 0 0.25rem 1.25rem; }
+ul { padding-left: 1.5rem; }
+li { margin-block: 0.5rem; }
+p { margin-block: 0.3rem; }
+[data-observation="value"] { white-space: pre-wrap; overflow-wrap: anywhere; }
+

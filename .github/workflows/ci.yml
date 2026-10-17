@@ -20,7 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install compiler dependencies
-        run: sudo apt-get update && sudo apt-get install -y ghc make cabal-install libghc-megaparsec-dev libghc-scientific-dev libghc-mtl-dev postgresql-client
+        run: sudo apt-get update && sudo apt-get install -y ghc make cabal-install libghc-megaparsec-dev libghc-scientific-dev libghc-mtl-dev libghc-aeson-dev libghc-vector-dev postgresql-client
       - name: Unit and CLI checks
         run: make test
       - name: PostgreSQL execution checks
@@ -31,6 +31,8 @@ jobs:
           PGUSER: postgres
           PGPASSWORD: postgres
           PGDATABASE: ontology_test
+      - name: Application compiler smoke checks
+        run: make app-test
       - name: Cabal package
         run: cabal --config-file=/dev/null build all --offline --with-compiler=/usr/bin/ghc
       - name: Check generated example is current

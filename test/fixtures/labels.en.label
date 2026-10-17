@@ -1,0 +1,89 @@
+language en;
+
+// Labels mirror ontology structure. A bare assignment supplies both grammatical
+// forms; singular/plural only override where the wording actually differs.
+labels Status {
+  case "active" = "Active";
+  case "paused" = "Paused";
+}
+labels OtherStatus {
+  case "active" = "Running";
+  case "paused" = "Stopped";
+}
+labels Rank {
+  case 1 = "First";
+  case 2 = "Second";
+}
+labels Flag {
+  case true = "Enabled";
+  case false = "Disabled";
+}
+labels Address {
+  city { = "City"; }
+}
+labels Pair {
+  identity {
+    = "Identity";
+    region { = "Region"; }
+    serial { = "Serial"; }
+  }
+}
+labels Person {
+  code { = "Code"; }
+  name {
+    = "Name";
+    inverse { = "Owner"; }
+  }
+  status { = "Status"; }
+  other { = "Other status"; }
+  rank { = "Rank"; }
+  flag { = "Flag"; }
+  optional { = "Optional status"; }
+  manager {
+    = "Manager";
+    inverse {
+      = "Managed person";
+      plural = "People managed";
+    }
+  }
+  pair { = "Pair"; }
+  first { = "First address"; }
+  second { = "Second address"; }
+  tags {
+    = "Tag";
+    plural = "Tags";
+  }
+  contacts {
+    = "Contact";
+    plural = "Contacts";
+    items {
+      kind { = "Channel"; }
+      value { = "Value"; }
+    }
+  }
+  work {
+    = "Work record";
+    plural = "Work records";
+    entries {
+      argument year { = "Year"; }
+      score { = "Score"; }
+    }
+  }
+  choice { = "Enrollment"; }
+}
+labels Choice {
+  tag state { = "Status"; }
+  case Active { = "Enrolled"; }
+  case Empty { = "No enrollment"; }
+}
+labels Active {
+  note { = "Note"; }
+  contact { = "Contact"; }
+}
+system {
+  mapKey = "Key";
+  mapValue = "Details";
+  contextValue = "Observed value";
+  cutoff = "Truncated";
+}
+

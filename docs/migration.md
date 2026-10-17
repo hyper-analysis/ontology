@@ -1,7 +1,7 @@
 # Extraction provenance
 
 Imported from `hyper-analysis/cognitive-ux`, commit
-`59d2a94c9a0233914c87215e4ae81dccf490fcbf`, directory `ontology-language/`.
+`59d2a94c9a0233914c87215e4ae81dccf490fcbf`, directory ``.
 
 This is a selected source snapshot, not a copy of the private repository history.
 The source repository remains unchanged. The core includes ontology syntax,

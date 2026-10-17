@@ -1,0 +1,11 @@
+{
+  "pages": [
+    { "name": "summary", "title": "Person summary", "population": "Person", "depth": 1, "fields": ["code", "name", "status", "other", "rank", "flag", "optional"] },
+    { "name": "work", "title": "Work records", "population": "Person", "center": ["work"], "depth": 4 },
+    { "name": "score", "title": "Selected score", "population": "Person", "center": ["work", "entries", "score"], "depth": 0 },
+    { "name": "manager", "title": "Manager", "population": "Person", "center": ["manager"], "depth": 0 },
+    { "name": "choice", "title": "Enrollment", "population": "Person", "center": ["choice"], "depth": 4 },
+    { "name": "tag", "title": "Enrollment status", "population": "Person", "center": ["choice", "tag"], "depth": 0 }
+  ]
+}
+

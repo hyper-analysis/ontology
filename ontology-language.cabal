@@ -13,6 +13,12 @@ extra-source-files: README.md, CHANGELOG.md, docs/*.md, docs/o-sql/*.md,
                     docs/o-sql/grammar.bnf, docs/o-sql/examples/*.osql,
                     docs/o-sql/examples/*.ontology, examples/*.ontology, examples/*.osql
 
+
+flag experimental-app
+  description: Build the experimental application compiler
+  default: False
+  manual: True
+
 common settings
   build-depends: base >=4.14 && <5, containers, megaparsec, mtl, scientific, time
   default-language: Haskell2010
@@ -26,6 +32,29 @@ library
                    Postgres.Mapping, OSQL.Syntax, OSQL.Parser, OSQL.Type, OSQL.Check,
                    OSQL.Compile, SQL.Syntax, SQL.Reference, SQL.Query, SQL.Validate, SQL.Render
   other-modules: OSQL.Checked, OSQL.Timestamp, OSQL.Target, OSQL.Storage
+  if flag(experimental-app)
+    build-depends: aeson, bytestring, text, vector, directory, filepath
+    exposed-modules: Application.Compiler,
+                     Application.Data,
+                     Application.Endpoint,
+                     Application.Files,
+                     Application.Input,
+                     Application.JSX,
+                     Application.Presentation,
+                     Application.TypeScript,
+                     Ontology.Center,
+                     Ontology.Center.Graph,
+                     Ontology.Center.Lazy,
+                     Ontology.Center.Observe,
+                     Ontology.Labels,
+                     Ontology.Labels.Adapter,
+                     Ontology.Labels.Parser,
+                     Ontology.Labels.Plan,
+                     Ontology.Labels.Types,
+                     Ontology.Projection,
+                     Ontology.Read,
+                     Ontology.Views,
+                     Postgres.Read
 
 executable ontology
   import: settings
@@ -78,4 +107,20 @@ test-suite sql-backend-test
   main-is: SQLMain.hs
   hs-source-dirs: test
   build-depends: ontology-language, directory, filepath
+
+executable ontology-app
+  import: settings
+  main-is: ApplicationMain.hs
+  hs-source-dirs: app
+  build-depends: ontology-language
+  if !flag(experimental-app)
+    buildable: False
+
+executable ontology-labels
+  import: settings
+  main-is: LabelMain.hs
+  hs-source-dirs: app
+  build-depends: ontology-language
+  if !flag(experimental-app)
+    buildable: False
 
