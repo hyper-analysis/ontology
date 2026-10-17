@@ -5,6 +5,8 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-24.04
+    env:
+      GHC: /usr/bin/ghc
     services:
       postgres:
         image: postgres:16
@@ -30,7 +32,7 @@ jobs:
           PGPASSWORD: postgres
           PGDATABASE: ontology_test
       - name: Cabal package
-        run: cabal --config-file=/dev/null build all --offline
+        run: cabal --config-file=/dev/null build all --offline --with-compiler=/usr/bin/ghc
       - name: Check generated example is current
         run: ./build/ontology compile examples/school.ontology --root School | diff -u examples/school.sql -
 
