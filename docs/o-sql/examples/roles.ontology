@@ -1,0 +1,51 @@
+type Student = {
+    programme: string;
+    adviser?: Ref<Person>;
+    enrollments: (year: number, code: string) => Enrollment;
+};
+
+type Teacher = {
+    department: string;
+    lessons: Ref<Lesson>[];
+};
+
+type Role = alternative role {
+    Student: Student;
+    Teacher: Teacher;
+};
+
+type Person = {
+    key name: string;
+    role: Role;
+};
+
+type Enrollment = {
+    lesson: Ref<Lesson>;
+};
+
+type Online = {
+    platform: string;
+    url: string;
+};
+
+type OnSite = {
+    campus: string;
+    room: string;
+};
+
+type Delivery = alternative delivery {
+    Online: Online;
+    OnSite: OnSite;
+};
+
+type Lesson = {
+    key code: string;
+    startsAt: timestamp;
+    delivery: Delivery;
+};
+
+type Root = {
+    people: Person[];
+    lessons: Lesson[];
+};
+

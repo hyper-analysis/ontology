@@ -1,0 +1,13 @@
+let noon = timestamp("2026-10-17T12:00:00+02:00");
+
+select person
+from root.people as person
+where exists (
+    select lesson
+    from person.lessons as lesson
+    where lesson.startsAt < noon
+)
+where every lesson in person.lessons {
+    lesson.startsAt < noon or person.city = "Paris"
+}
+

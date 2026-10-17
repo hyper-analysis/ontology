@@ -1,0 +1,8 @@
+let alice = root.people("alice");
+
+{
+    city: alice?.city,
+    teacher: alice?.teacher?.name,
+    absent: alice = null
+}
+

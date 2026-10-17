@@ -1,0 +1,16 @@
+type Person = {
+  key email: string;
+  name: string;
+};
+
+type Course = {
+  key code: string;
+  teacher: Ref<Person>;
+  students: Ref<Person>[];
+};
+
+type School = {
+  people: Person[];
+  courses: Course[];
+};
+

@@ -1,0 +1,81 @@
+cabal-version: 2.4
+name: ontology-language
+version: 0.1.0.0
+synopsis: Semantic data modeling language and PostgreSQL compiler
+description: A bounded ontology language, compositional relational semantics, and O-SQL.
+license: Apache-2.0
+license-file: LICENSE
+author: hyper-analysis
+maintainer: hyper-analysis@users.noreply.github.com
+category: Database, Compilers
+build-type: Simple
+extra-source-files: README.md, CHANGELOG.md, docs/*.md, docs/o-sql/*.md,
+                    docs/o-sql/grammar.bnf, docs/o-sql/examples/*.osql,
+                    docs/o-sql/examples/*.ontology, examples/*.ontology, examples/*.osql
+
+common settings
+  build-depends: base >=4.14 && <5, containers, megaparsec, mtl, scientific, time
+  default-language: Haskell2010
+  ghc-options: -Wall -Werror
+
+library
+  import: settings
+  hs-source-dirs: src
+  exposed-modules: Ontology.Syntax, Ontology.Parser, Ontology.Check,
+                   Ontology.Relational, Ontology.Postgres, Postgres.Physical,
+                   Postgres.Mapping, OSQL.Syntax, OSQL.Parser, OSQL.Type, OSQL.Check,
+                   OSQL.Compile, SQL.Syntax, SQL.Reference, SQL.Query, SQL.Validate, SQL.Render
+  other-modules: OSQL.Checked, OSQL.Timestamp, OSQL.Target, OSQL.Storage
+
+executable ontology
+  import: settings
+  main-is: OntologyMain.hs
+  hs-source-dirs: app
+  build-depends: ontology-language
+
+executable ontology-check
+  import: settings
+  main-is: Main.hs
+  hs-source-dirs: app
+  build-depends: ontology-language
+
+executable osql-compile
+  import: settings
+  main-is: OSQLCompileMain.hs
+  hs-source-dirs: app
+  build-depends: ontology-language
+
+executable osql-parse
+  import: settings
+  main-is: OSQLMain.hs
+  hs-source-dirs: app
+  build-depends: ontology-language
+
+test-suite ontology-language-test
+  import: settings
+  type: exitcode-stdio-1.0
+  main-is: Main.hs
+  hs-source-dirs: test
+  build-depends: ontology-language, directory, filepath
+
+test-suite osql-parser-test
+  import: settings
+  type: exitcode-stdio-1.0
+  main-is: OSQLMain.hs
+  hs-source-dirs: test
+  build-depends: ontology-language, directory, filepath
+
+test-suite osql-compiler-test
+  import: settings
+  type: exitcode-stdio-1.0
+  main-is: OSQLCompileMain.hs
+  hs-source-dirs: test
+  build-depends: ontology-language, directory, filepath
+
+test-suite sql-backend-test
+  import: settings
+  type: exitcode-stdio-1.0
+  main-is: SQLMain.hs
+  hs-source-dirs: test
+  build-depends: ontology-language, directory, filepath
+

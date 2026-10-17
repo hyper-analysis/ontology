@@ -1,0 +1,63 @@
+# Concrete token-level BNF for the O-SQL core.
+# ::= defines a nonterminal, | separates alternatives, epsilon is empty.
+# Quoted strings are literal tokens. IDENT, STRING and NUMBER are lexical tokens.
+# Whitespace and // line comments are discarded outside STRING.
+# See README.md for Unicode, escapes, reserved words and timestamp validation.
+# Implemented by OSQL.Parser; checking and evaluation are subsequent stages.
+
+<program> ::= <definitions> <expression> <end>
+<definitions> ::= <definition> <definitions> | epsilon
+<definition> ::= "let" IDENT "=" <expression> ";"
+<end> ::= ";" | epsilon
+
+<expression> ::= <query> | <value-expression>
+<query> ::= <selection-keyword> <projection> "from" <sources> <steps>
+<selection-keyword> ::= "select" | "select!"
+<projection> ::= <value-expression> | <named-projections>
+<named-projections> ::= <named-projection> | <named-projection> "," <named-projections>
+<named-projection> ::= <value-expression> "as" <label>
+<sources> ::= <source> | <source> "," <sources>
+<source> ::= <value-expression> "as" IDENT
+<steps> ::= <step> <steps> | epsilon
+<step> ::= "let" IDENT "=" <value-expression> | "where" <value-expression>
+
+<value-expression> ::= <implication>
+<implication> ::= <disjunction> | <disjunction> "implies" <implication>
+<disjunction> ::= <conjunction> | <disjunction> "or" <conjunction>
+<conjunction> ::= <negation> | <conjunction> "and" <negation>
+<negation> ::= <comparison> | "not" <negation>
+<comparison> ::= <postfix> | <postfix> <comparison-operator> <postfix>
+<comparison-operator> ::= "=" | "<" | "<=" | ">" | ">=" | "in"
+
+<postfix> ::= <chain> | "(" <expression> ")"
+<chain> ::= <primary> | <chain> "." <label> | <chain> "?." <label> | <chain> "(" <arguments> ")"
+<arguments> ::= <value-expression> | <named-arguments>
+<named-arguments> ::= <named-argument> | <named-argument> "," <named-arguments>
+<named-argument> ::= <label> ":" <value-expression>
+
+<primary> ::= IDENT | "root" | STRING | NUMBER | "true" | "false" | "null" | <record> | <builtin> | <quantifier> | <match>
+<record> ::= "{" <record-fields> "}"
+<record-fields> ::= <nonempty-record-fields> | epsilon
+<nonempty-record-fields> ::= <record-field> | <record-field> "," <nonempty-record-fields>
+<record-field> ::= <label> ":" <value-expression>
+
+<builtin> ::= "count" "(" <value-expression> ")"
+<builtin> ::= "entries" "(" <value-expression> ")"
+<builtin> ::= "only" "(" <value-expression> ")"
+<builtin> ::= "first" "(" <value-expression> ")"
+<builtin> ::= "at" "(" <value-expression> "," <value-expression> ")"
+<builtin> ::= "timestamp" "(" STRING ")"
+
+<match> ::= "match" <value-expression> "{" <match-arms> "}"
+<match-arms> ::= <case-arm> <match-arms> | <case-arm> | <default-arm>
+<case-arm> ::= <case-label> IDENT "=>" <expression> ";"
+<case-label> ::= IDENT | <keyword>
+<default-arm> ::= "_" "=>" <expression> ";"
+
+<quantifier> ::= "exists" "(" <expression> ")" | "exist!" "(" <expression> ")" | "exists!" "(" <expression> ")"
+<quantifier> ::= "exists" IDENT "in" <value-expression> "{" <value-expression> "}"
+<quantifier> ::= "every" IDENT "in" <value-expression> "{" <value-expression> "}"
+
+<label> ::= IDENT | <keyword> | "_"
+<keyword> ::= "select" | "from" | "as" | "let" | "where" | "root" | "true" | "false" | "null" | "match" | "not" | "and" | "or" | "implies" | "in" | "exists" | "exist" | "every" | "count" | "entries" | "only" | "first" | "at" | "timestamp"
+

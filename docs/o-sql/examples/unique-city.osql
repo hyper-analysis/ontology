@@ -1,0 +1,6 @@
+exist!(
+    select person.city
+    from root.people as person
+    where person.city = "Paris"
+)
+

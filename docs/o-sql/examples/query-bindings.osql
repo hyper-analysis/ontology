@@ -1,0 +1,9 @@
+let people = select person from root.people as person where person.city = "Paris";
+let alice = select! person from people as person where person.name = "alice";
+
+{
+    city: alice.city,
+    uniqueCity: exist!(select person.city from people as person),
+    uniquePerson: exist!(people)
+}
+

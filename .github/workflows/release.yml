@@ -1,0 +1,56 @@
+name: Release
+on:
+  push:
+    tags: ["v*"]
+permissions:
+  contents: read
+jobs:
+  binaries:
+    strategy:
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            platform: linux-x86_64
+          - runner: macos-14
+            platform: macos-aarch64
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: haskell-actions/setup@v2
+        with:
+          ghc-version: "9.6.7"
+          cabal-version: "3.10.3.0"
+      - run: cabal update
+      - run: cabal build exe:ontology
+      - name: Package executable
+        env:
+          PLATFORM: ${{ matrix.platform }}
+        run: |
+          mkdir -p package
+          cp "$(cabal list-bin exe:ontology)" package/ontology
+          cp LICENSE README.md package/
+          package/ontology --version
+          tar -czf "ontology-$PLATFORM.tar.gz" -C package .
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ontology-${{ matrix.platform }}
+          path: ontology-*.tar.gz
+  publish:
+    needs: binaries
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: ontology-*
+          merge-multiple: true
+          path: release
+      - run: cd release && sha256sum *.tar.gz > SHA256SUMS
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ github.ref_name }}
+        run: gh release create "$TAG" release/* --generate-notes --title "Ontology $TAG"
+

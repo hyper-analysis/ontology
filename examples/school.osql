@@ -1,0 +1,4 @@
+select c.code as course, c.teacher.name as teacher,
+       (select s.name from c.students as s) as students
+from root.courses as c
+

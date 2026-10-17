@@ -1,0 +1,35 @@
+type Lesson = {
+    key code: string;
+    startsAt: timestamp;
+};
+
+type Schooling = { label: string; };
+type Resident = { city: string; };
+type Visitor = { destination: string; };
+type Role = alternative role {
+    Resident: Resident;
+    Visitor: Visitor;
+};
+
+type Person = {
+    key name: string;
+    city: string;
+    teacher?: Ref<Person>;
+    lessons: Ref<Lesson>[];
+    schooling: (year: number, track: string) => Schooling;
+    role: Role;
+    empty?: {};
+};
+
+type Site = {
+    key country: string;
+    key code: number;
+    label: string;
+};
+
+type Root = {
+    people: Person[];
+    lessons: Lesson[];
+    sites: Site[];
+};
+

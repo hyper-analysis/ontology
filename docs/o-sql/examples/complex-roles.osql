@@ -1,0 +1,58 @@
+let noon = timestamp("2026-10-17T12:00:00Z");
+
+select
+    person as person,
+
+    match person.role {
+        Student student => {
+            programme: student.programme,
+            adviser: student.adviser?.name,
+
+            upcomingLessons: (
+                select
+                    entry.key.year as year,
+                    lesson as lesson,
+
+                    match lesson.delivery {
+                        Online online => {
+                            platform: online.platform,
+                            url: online.url
+                        };
+                        OnSite onSite => {
+                            campus: onSite.campus,
+                            room: onSite.room
+                        };
+                    } as attendance
+
+                from entries(student.enrollments) as entry
+                let lesson = entry.value.lesson
+                where lesson.startsAt >= noon
+                where match lesson.delivery {
+                    Online online => online.platform = "Teams";
+                    OnSite onSite => onSite.campus = "Paris";
+                }
+            )
+        };
+
+        Teacher teacher => {
+            department: teacher.department,
+
+            supervisedStudents: (
+                select candidate
+                from root.people as candidate
+                where match candidate.role {
+                    Student student =>
+                        student.adviser = person
+                        and every lesson in teacher.lessons {
+                            exists entry in entries(student.enrollments) {
+                                entry.value.lesson = lesson
+                            }
+                        };
+                    Teacher other => false;
+                }
+            )
+        };
+    } as details
+
+from root.people as person
+

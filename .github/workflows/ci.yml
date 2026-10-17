@@ -1,0 +1,36 @@
+name: CI
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: ontology_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready --health-interval 5s
+          --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install compiler dependencies
+        run: sudo apt-get update && sudo apt-get install -y ghc make cabal-install libghc-megaparsec-dev libghc-scientific-dev libghc-mtl-dev postgresql-client
+      - name: Unit and CLI checks
+        run: make test
+      - name: PostgreSQL execution checks
+        run: make sql-test
+        env:
+          ONTOLOGY_TEST_DATABASE: "1"
+          PGHOST: localhost
+          PGUSER: postgres
+          PGPASSWORD: postgres
+          PGDATABASE: ontology_test
+      - name: Cabal package
+        run: cabal --config-file=/dev/null build all --offline
+      - name: Check generated example is current
+        run: ./build/ontology compile examples/school.ontology --root School | diff -u examples/school.sql -
+

@@ -1,0 +1,8 @@
+select resident.city
+from root.people as person
+let resident = match person.role {
+    Resident payload => payload;
+    Visitor payload => null;
+}
+where not (resident = null)
+

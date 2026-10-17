@@ -1,0 +1,7 @@
+let alice = root.people("alice");
+
+select entry.key.year as year,
+       entry.key.track as track,
+       entry.value.label as label
+from entries(alice.schooling) as entry
+

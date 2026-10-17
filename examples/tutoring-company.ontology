@@ -1,0 +1,268 @@
+// Propulse tutoring ontology.
+// This is not TypeScript. It intentionally uses a small TypeScript-like ontology language.
+
+type Subject = "french" | "mathematics" | "physics_chemistry";
+type SchoolLevel =
+    "6e" | "5e" | "4e" | "3e"
+  | "6e SEGPA" | "5e SEGPA" | "4e SEGPA" | "3e SEGPA"
+  | "3e prépa-métiers"
+  | "2de générale et technologique" | "2de spécifique"
+  | "1re générale" | "Tle générale"
+  | "1re technologique" | "Tle technologique"
+  | "2de professionnelle" | "1re professionnelle" | "Tle professionnelle"
+  | "CAP — 1re année" | "CAP — 2e année" | "CAP — 3e année"
+  | "CAP agricole — 1re année" | "CAP agricole — 2e année" | "CAP agricole — 3e année"
+  | "BNMA — 1re année" | "BNMA — 2e année" | "BNMA — 3e année"
+  | "BMA — 1re année" | "BMA — 2e année"
+  | "BP — 1re année" | "BP — 2e année"
+  | "Certificat de spécialisation" | "À préciser";
+type Gender = "male" | "female";
+type Weekday = "monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday" | "sunday";
+type RequestNature = "reservation" | "makeup";
+
+type Email = string;
+type PhoneNumber = string;
+type CalendarDate = string;
+type Instant = timestamp;
+type SessionDurationSeconds = 7200;
+type AttendanceHours = 1 | 2;
+type AgreedHours = number;
+
+type Address = {
+  address: string;
+  postalCode?: string;
+  city?: string;
+};
+
+type LocalTime = {
+  hour: number;
+  minute: number;
+  second: number;
+};
+
+type Session = {
+  startsAt: Instant;
+  duration: SessionDurationSeconds;
+  subject: Subject;
+};
+
+type SessionStart = {
+  startsAt: Instant;
+};
+
+type SessionLocation = {
+  program: Ref<SessionProgram>;
+  start: SessionStart;
+};
+
+type PersonFields = {
+  firstName: string;
+  lastName: string;
+  address: Address;
+  birthDate?: CalendarDate;
+  email?: Email;
+  phone?: PhoneNumber;
+  gender?: Gender;
+};
+
+type GuardianParent = {
+  primaryContact: boolean;
+  guardian: Ref<Person>;
+};
+
+type GuardianOther = {
+  primaryContact: boolean;
+  guardian: Ref<Person>;
+  detail: string;
+};
+
+type Guardian = alternative relationship {
+  Parent: GuardianParent;
+  Other: GuardianOther;
+};
+
+type Schooling = {
+  level: SchoolLevel;
+  detail: string;
+  specialties: string;
+  agreedHours: AgreedHours;
+};
+
+type Student = PersonFields & {
+  birthDate: CalendarDate;
+  guardians: (guardian: Ref<Person>) => Guardian;
+  schooling: (year: Ref<SchoolYear>) => Schooling;
+};
+
+type Teacher = PersonFields & {
+  email: Email;
+  teachingSubjects: unique Subject[];
+};
+
+type WithoutStatus = PersonFields;
+
+type PersonDetails = alternative enrollmentType {
+  Student: Student;
+  Teacher: Teacher;
+  WithoutStatus: WithoutStatus;
+};
+
+type Person = {
+  key reference: string;
+  details: PersonDetails;
+};
+
+type WeeklySegment = {
+  startDate: CalendarDate;
+  endDate?: CalendarDate;
+  weekday: Weekday;
+  time: LocalTime;
+  duration: SessionDurationSeconds;
+  subject: Subject;
+};
+
+type Empty = {};
+
+type AddedSession = {
+  duration: SessionDurationSeconds;
+  subject: Subject;
+};
+
+type AssignmentFields = {
+  pendingConfirmations: (start: SessionStart) => Empty;
+};
+
+type TotalAssignment = AssignmentFields & {
+  excludedSessions: (start: SessionStart) => Empty;
+};
+
+type PartialAssignment = AssignmentFields & {
+  selectedSessions: (start: SessionStart) => Empty;
+};
+
+type Assignment = alternative coverage {
+  Total: TotalAssignment;
+  Partial: PartialAssignment;
+};
+
+type SessionProgramFields = {
+  addedSessions: (start: SessionStart) => AddedSession;
+  excludedSessions: (start: SessionStart) => Empty;
+  assignments: (person: Ref<Person>) => Assignment;
+};
+
+type StandaloneProgram = SessionProgramFields & {
+  standalone: Session;
+};
+
+type WeeklyProgram = SessionProgramFields & {
+  weeklySegments: (startDate: CalendarDate) => WeeklySegment;
+};
+
+type Intensive = {
+  startDate: CalendarDate;
+  endDate: CalendarDate;
+  time: LocalTime;
+  duration: SessionDurationSeconds;
+  subject: Subject;
+};
+
+type IntensiveProgram = SessionProgramFields & {
+  intensive: Intensive;
+};
+
+type SessionProgramDetails = alternative programKind {
+  Standalone: StandaloneProgram;
+  Weekly: WeeklyProgram;
+  Intensive: IntensiveProgram;
+};
+
+type SessionProgram = {
+  key code: string;
+  details: SessionProgramDetails;
+};
+
+type StudentAttendance = {
+  duration: AttendanceHours;
+  notes: string;
+};
+
+type RecordedSession = Session & {
+  notes: string;
+  teachers: unique Ref<Person>[];
+  studentAttendance: (student: Ref<Person>) => StudentAttendance;
+};
+
+type Holiday = {
+  label: string;
+  closedFrom: CalendarDate;
+  reopensOn: CalendarDate;
+};
+
+type SchoolYear = {
+  key startYear: number;
+  startsOn: CalendarDate;
+  endsOn: CalendarDate;
+  programs: Ref<SessionProgram>[];
+  recordedSessions: (startsAt: Instant) => RecordedSession;
+  holidays: Holiday[];
+};
+
+type ExistingProgramRequest = {
+  program: Ref<SessionProgram>;
+  session?: SessionStart;
+};
+
+type UnassignedProgramRequest = {};
+
+type RequestProgram = alternative programSelection {
+  Existing: ExistingProgramRequest;
+  Unassigned: UnassignedProgramRequest;
+};
+
+type PendingReview = {};
+type ReviewedRequest = {
+  reviewedAt: Instant;
+};
+
+type RequestReview = alternative status {
+  Pending: PendingReview;
+  Approved: ReviewedRequest;
+  Rejected: ReviewedRequest;
+  Withdrawn: ReviewedRequest;
+};
+
+type ParentRequest = {
+  student: Ref<Person>;
+  year: Ref<SchoolYear>;
+  nature: RequestNature;
+  requestedSchedule: Session;
+  reason?: string;
+  requestedAt: Instant;
+  program: RequestProgram;
+  review: RequestReview;
+};
+
+type ReportedAbsence = {
+  student: Ref<Person>;
+  session?: SessionLocation;
+  reportedSchedule: Session;
+  note?: string;
+  reportedAt: Instant;
+};
+
+type ParentAccount = {
+  key email: Email;
+  enabled: boolean;
+  guardians: Ref<Person>[];
+  requests: (requestedAt: Instant) => ParentRequest;
+  reportedAbsences: (reportedAt: Instant) => ReportedAbsence;
+};
+
+type TutoringCompany = {
+  people: Person[];
+  schoolYears: SchoolYear[];
+  sessionPrograms: SessionProgram[];
+  parentAccounts: ParentAccount[];
+};
+

@@ -1,0 +1,6 @@
+select match person.role {
+    Resident resident => resident.city;
+    Visitor visitor => { destination: visitor.destination };
+} as value
+from root.people as person
+

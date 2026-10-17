@@ -1,0 +1,3 @@
+let alice = root.people("alice");
+alice.city
+

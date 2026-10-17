@@ -1,0 +1,6 @@
+select teacherCity
+from root.people as person
+let teacher = person.teacher
+where not (teacher = null)
+let teacherCity = teacher.city
+
