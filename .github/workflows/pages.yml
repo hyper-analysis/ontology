@@ -31,6 +31,12 @@ jobs:
       - name: Install pinned GHC WASM toolchain
         if: steps.wasm-cache.outputs.cache-hit != 'true'
         run: bash scripts/setup-wasm.sh
+      - name: Save installed WASM toolchain
+        if: steps.wasm-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: ~/.ghc-wasm-ontology
+          key: ontology-wasm-9.12-${{ runner.os }}-${{ hashFiles('scripts/setup-wasm.sh', 'cabal.project.wasm') }}
       - name: Compile Haskell to WebAssembly and bundle the workbench
         run: |
           source "$HOME/.ghc-wasm-ontology/env"
@@ -52,10 +58,10 @@ jobs:
           NATIVE_WORKBENCH_RUNTIME: ${{ github.workspace }}/build/workbench-runtime
       - name: Validate public distribution
         run: |
-          python3 scripts/check-website.py
-          python3 scripts/check-public-workbench.py
           mkdir -p website/workbench
           cp -R osql-workbench/dist/. website/workbench/
+          python3 scripts/check-website.py
+          python3 scripts/check-public-workbench.py
       - uses: actions/upload-artifact@v4
         with:
           name: ontology-static-site

@@ -32,7 +32,8 @@ for link in page.links:
         assert url.scheme == "https", f"Unexpected external URL: {link}"
         continue
     if url.path:
-        assert (site / url.path).is_file(), f"Missing asset: {link}"
+        target = site / url.path
+        assert target.is_file() or (target / "index.html").is_file(), f"Missing asset: {link}"
     elif url.fragment:
         assert url.fragment in page.ids, f"Missing fragment: {link}"
 assert (site / "school.sql").read_text() == (site.parent / "examples/school.sql").read_text()
