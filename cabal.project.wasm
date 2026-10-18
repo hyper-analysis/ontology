@@ -1,0 +1,8 @@
+packages: . browser-runtime
+index-state: 2026-10-01T00:00:00Z
+tests: False
+benchmarks: False
+optimization: 1
+jobs: 4
+package ontology-language
+  ghc-options: -Wno-x-partial

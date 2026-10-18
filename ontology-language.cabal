@@ -20,11 +20,12 @@ common settings
 
 library
   import: settings
+  build-depends: aeson
   hs-source-dirs: src
   exposed-modules: Ontology.Syntax, Ontology.Parser, Ontology.Check,
                    Ontology.Relational, Ontology.Postgres, Postgres.Physical,
                    Postgres.Mapping, OSQL.Syntax, OSQL.Parser, OSQL.Type, OSQL.Check,
-                   OSQL.Compile, SQL.Syntax, SQL.Reference, SQL.Query, SQL.Validate, SQL.Render
+                   OSQL.Compile, Workbench.Compile, SQL.Syntax, SQL.Reference, SQL.Query, SQL.Validate, SQL.Render
   other-modules: OSQL.Checked, OSQL.Timestamp, OSQL.Target, OSQL.Storage
 
 executable ontology

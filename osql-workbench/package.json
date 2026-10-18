@@ -1,0 +1,36 @@
+{
+  "name": "osql-workbench",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc --noEmit && vite build",
+    "build:wasm": "bash scripts/build-wasm.sh",
+    "build:browser": "npm run build:wasm && npm run build",
+    "test:static": "playwright test --config playwright.static.config.ts"
+  },
+  "dependencies": {
+    "@bjorn3/browser_wasi_shim": "0.4.2",
+    "@codemirror/language": "^6.11.0",
+    "@codemirror/legacy-modes": "^6.5.0",
+    "@codemirror/state": "^6.5.0",
+    "@codemirror/view": "^6.36.0",
+    "@electric-sql/pglite": "^0.3.14",
+    "@faker-js/faker": "^9.9.0",
+    "codemirror": "^6.0.1",
+    "express": "^5.1.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.55.1",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.4.0",
+    "tsx": "^4.20.0",
+    "typescript": "^5.8.0",
+    "vite": "^6.3.0"
+  }
+}

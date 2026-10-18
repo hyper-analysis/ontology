@@ -4,3 +4,9 @@
 *.hi
 *.o
 
+
+/dist-wasm/
+/osql-workbench/node_modules/
+/osql-workbench/dist/
+/osql-workbench/public/runtime/
+/osql-workbench/test-results*/

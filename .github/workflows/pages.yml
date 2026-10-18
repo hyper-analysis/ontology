@@ -1,33 +1,79 @@
-name: GitHub Pages
+name: Browser workbench
 on:
   push:
     branches: [main]
-    paths: ["website/**", ".github/workflows/pages.yml"]
+    paths: ["src/**", "browser-runtime/**", "osql-workbench/**", "ontology-language.cabal", "cabal.project.wasm", "scripts/setup-wasm.sh", "website/**", ".github/workflows/pages.yml"]
   workflow_dispatch:
 permissions:
   contents: read
-  pages: write
-  id-token: write
 concurrency:
-  group: pages
+  group: browser-workbench
   cancel-in-progress: true
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: osql-workbench/package-lock.json
+      - name: Install native reference compiler
+        run: sudo apt-get update && sudo apt-get install -y ghc libghc-megaparsec-dev libghc-scientific-dev libghc-aeson-dev jq unzip zstd
+      - run: npm --prefix osql-workbench ci
+      - uses: actions/cache@v4
+        id: wasm-cache
+        with:
+          path: ~/.ghc-wasm-ontology
+          key: ontology-wasm-9.12-${{ runner.os }}-${{ hashFiles('scripts/setup-wasm.sh', 'cabal.project.wasm') }}
+      - name: Install pinned GHC WASM toolchain
+        if: steps.wasm-cache.outputs.cache-hit != 'true'
+        run: bash scripts/setup-wasm.sh
+      - name: Compile Haskell to WebAssembly and bundle the workbench
+        run: |
+          source "$HOME/.ghc-wasm-ontology/env"
+          npm --prefix osql-workbench run build:browser
+      - name: Build native reference transport
+        run: |
+          mkdir -p build/runtime
+          /usr/bin/ghc -O0 -isrc -ibrowser-runtime/src -outputdir build/runtime browser-runtime/app/Main.hs -o build/workbench-runtime
+      - name: Compare native and WASM compiler responses
+        working-directory: osql-workbench
+        run: node test/wasm-parity.mjs
+        env:
+          NATIVE_WORKBENCH_RUNTIME: ${{ github.workspace }}/build/workbench-runtime
+      - run: npx --prefix osql-workbench playwright install --with-deps chromium
+      - name: Test compiler parity and PGlite end to end
+        working-directory: osql-workbench
+        run: npm run test:static
+        env:
+          NATIVE_WORKBENCH_RUNTIME: ${{ github.workspace }}/build/workbench-runtime
+      - name: Validate public distribution
+        run: |
+          python3 scripts/check-website.py
+          python3 scripts/check-public-workbench.py
+          mkdir -p website/workbench
+          cp -R osql-workbench/dist/. website/workbench/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ontology-static-site
+          path: website
+          retention-days: 14
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: website
+  deploy:
+    needs: build
+    runs-on: ubuntu-24.04
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
-      - name: Validate static site
-        run: |
-          node --check website/site.js
-          python3 scripts/check-website.py
       - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: website
-      - name: Deploy
-        id: deployment
+      - id: deployment
         uses: actions/deploy-pages@v4
-
