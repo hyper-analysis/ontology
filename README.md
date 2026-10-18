@@ -38,6 +38,8 @@ For the experimental application compiler, see [setup and scope](docs/app-compil
 
 ## Browser workbench
 
+[Open the live workbench](https://hyper-analysis.github.io/ontology/workbench/).
+
 The static workbench compiles the Haskell compiler to WebAssembly and runs generated SQL in PGlite. Model, generate data and query entirely in your browser. See [browser setup and behavior](docs/browser-workbench.md).
 
 ## Try it
