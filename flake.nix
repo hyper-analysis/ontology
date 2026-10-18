@@ -9,7 +9,7 @@
         let
           pkgs = import nixpkgs { inherit system; };
           compiler = pkgs.haskellPackages.ghcWithPackages (hs: with hs; [
-            containers megaparsec mtl scientific time
+            containers megaparsec mtl scientific time aeson bytestring text
           ]);
         in { inherit pkgs compiler; };
     in {
@@ -35,7 +35,7 @@
         let inherit (environment system) pkgs compiler;
         in {
           default = pkgs.mkShell {
-            packages = [ compiler pkgs.cabal-install pkgs.gnumake pkgs.postgresql_16 pkgs.python3 ];
+            packages = [ compiler pkgs.cabal-install pkgs.gnumake pkgs.postgresql_16 pkgs.python3 pkgs.nodejs_22 ];
             GHC = "${compiler}/bin/ghc";
           };
         });

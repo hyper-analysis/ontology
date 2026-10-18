@@ -106,4 +106,4 @@ The Haskell definitions are intended to remain an executable semantic reference
 as the compiler evolves. Future optimization rules and a Rust implementation
 should be checked against that reference through a shared conformance corpus.
 Compilation performance and generated SQL performance are measured separately.
-See the [roadmap](roadmap.md) for the proposed optimization and generalization work.
+See the [roadmap](roadmap.md) for the proposed optimization work.

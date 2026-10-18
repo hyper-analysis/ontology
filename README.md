@@ -1,4 +1,4 @@
-# Ontology
+# Ontology — application compilation experiment
 
 **A semantic data modeling language that compiles to relational databases.**
 
@@ -33,6 +33,12 @@ ontology inspect examples/school.ontology --root School
 This produces independent Person and Course populations, a relation for course
 students, foreign keys for references, and uniqueness for declared semantic keys.
 See the [generated school schema](examples/school.sql).
+
+For the experimental application compiler, see [setup and scope](docs/app-compilation.md).
+
+## Browser workbench
+
+The static workbench compiles the Haskell compiler to WebAssembly and runs generated SQL in PGlite. Model, generate data and query entirely in your browser. See [browser setup and behavior](docs/browser-workbench.md).
 
 ## Try it
 
@@ -81,9 +87,6 @@ psql -X -qAt -v ON_ERROR_STOP=1 -f query.sql
 it does not connect to a database or generate sample data. Install the schema
 once, populate it, then execute compiled queries. Sets have no guaranteed
 transport order. See [O-SQL](docs/o-sql/README.md) for semantics and backend limits.
-
-For a complete runnable example, including seed data and the expected JSON result,
-follow the [quickstart](docs/quickstart.md).
 
 ## What it models
 
