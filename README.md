@@ -104,6 +104,11 @@ and application structure from the same domain model. An experimental
 [application compilation branch](https://github.com/hyper-analysis/ontology/tree/feat/app-compilation)
 keeps that work separate from the released core. See the [roadmap](docs/roadmap.md).
 
+
+The next compiler stages are explicit optimization rules and a Rust implementation
+checked against the Haskell executable specification. These are planned directions;
+the current compiler remains Haskell. See the [roadmap](docs/roadmap.md).
+
 The syntax and generated storage layout may change before 1.0. Recompilation is
 not a database migration strategy; inspect generated SQL before applying it.
 

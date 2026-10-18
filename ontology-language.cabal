@@ -42,7 +42,6 @@ library
                      Application.JSX,
                      Application.Presentation,
                      Application.TypeScript,
-                     Ontology.Center,
                      Ontology.Center.Graph,
                      Ontology.Center.Lazy,
                      Ontology.Center.Observe,
