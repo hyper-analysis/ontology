@@ -5,7 +5,7 @@ scientific and time. Tests also use directory and filepath. CI uses Ubuntu
 24.04's packaged GHC and libraries.
 
 ```sh
-sudo apt-get install ghc make libghc-megaparsec-dev libghc-scientific-dev libghc-mtl-dev
+sudo apt-get install ghc make libghc-megaparsec-dev libghc-scientific-dev libghc-mtl-dev python3
 make
 make test
 make install PREFIX="$HOME/.local"
