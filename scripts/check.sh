@@ -27,11 +27,21 @@ build/ontology check examples/school.ontology --root School
 build/ontology inspect examples/school.ontology --root School > "$work/inspect.txt"
 build/ontology compile examples/school.ontology --root School > "$work/schema.sql"
 build/ontology query examples/school.ontology examples/school.osql --root School > "$work/query.sql"
+python3 test/cli.py
 if [[ "$mode" == postgres ]]; then
   psql -X -qAt -v ON_ERROR_STOP=1 -f "$work/backend.sql" > "$work/backend.jsonl"
   psql -X -qAt -v ON_ERROR_STOP=1 -f "$work/osql.sql" > "$work/osql.jsonl"
   python3 test/check-read-results.py "$work/backend.jsonl"
   python3 test/check-read-results.py "$work/osql.jsonl"
+  psql -X -qAt -v ON_ERROR_STOP=1 -f "$work/schema.sql"
+  psql -X -qAt -v ON_ERROR_STOP=1 -f examples/school-data.sql
+  psql -X -qAt -v ON_ERROR_STOP=1 -f "$work/query.sql" > "$work/school.jsonl"
+  python3 - "$work/school.jsonl" <<'PYTHON'
+import json, sys
+rows=[json.loads(line) for line in open(sys.argv[1]) if line.strip()]
+assert rows == [[{'course':'MATH','teacher':'Alice','students':['Bob']}]], rows
+print('Verified the quickstart against PostgreSQL.')
+PYTHON
 fi
 echo 'Ontology checks passed.'
 

@@ -46,7 +46,7 @@
             pname = "ontology-checks";
             version = "0.1.0";
             src = self;
-            nativeBuildInputs = [ compiler pkgs.gnumake ];
+            nativeBuildInputs = [ compiler pkgs.gnumake pkgs.python3 ];
             buildPhase = "make test";
             installPhase = "touch $out";
           };
