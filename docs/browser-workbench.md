@@ -31,6 +31,19 @@ Models and selectors are saved in the browser's local storage. Generated data
 is held in memory and is lost on reload. The worker resets after a timed-out
 operation; compile and generate again to restore the workspace.
 
+## Examples
+
+Use **Ontology example** to load School, Uber (a fictional ride-hailing service),
+Shop or Library. Each preset replaces the source, root type and initial query,
+and clears the previous compiled model and generated data. Compile the example,
+then generate records on the Data page. On Selector, **Query example** loads a
+query for that model; the source and queries remain editable.
+
+The ride-hailing model links riders, drivers, vehicles and trips. Its queries
+cover trip details, completed trips, available drivers, nested rider histories
+and population counts. Generated data is illustrative, not a business simulation;
+for example, fares are numeric test values rather than validated billing data.
+
 ## Validate
 
 The Pages workflow compares native and WASM responses on valid models, invalid

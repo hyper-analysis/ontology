@@ -1155,3 +1155,24 @@ tr:hover td {
     padding: 12px 14px;
   }
 }
+
+.example-picker {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--line);
+  font-size: 12px;
+}
+.example-picker select {
+  min-width: 0;
+  max-width: 100%;
+  flex: 1 1 180px;
+  padding: 7px 10px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--paper, #fff);
+  color: inherit;
+  font: inherit;
+}

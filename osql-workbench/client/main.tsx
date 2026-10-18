@@ -14,6 +14,7 @@ import { generators } from "../shared/types";
 import { Editor } from "./Editor";
 import { request } from "./api";
 import { exampleOntology, exampleQuery } from "./example";
+import { ontologyExamples } from "./presets";
 import "./style.css";
 
 type Page = "ontology" | "data" | "selector";
@@ -405,6 +406,27 @@ function App() {
   const [query, setQuery] = useState(() =>
     readSaved("osql.query", exampleQuery),
   );
+  const [exampleId, setExampleId] = useState(() =>
+    readSaved("osql.example", ontologyExamples.find(e => e.source === source && e.root === root)?.id ?? ""),
+  );
+  const activeExample = ontologyExamples.find(e => e.id === exampleId);
+  function loadExample(id: string) {
+    const example = ontologyExamples.find(e => e.id === id);
+    if (!example || busy) return;
+    setExampleId(id);
+    save("osql.example", id);
+    setSource(example.source);
+    setRoot(example.root);
+    setQuery(example.queries[0].source);
+    setModel(null);
+    setGeneration(null);
+    setAssignments({});
+    setSelection(null);
+    setActiveSpan(null);
+    setOutput(null);
+    setErrors({});
+    setTab("generate");
+  }
   const queryRef = useRef(query);
   queryRef.current = query;
   const [compiledSource, setCompiledSource] = useState("");
@@ -627,6 +649,15 @@ function App() {
                   </button>
                 </div>
               </div>
+              <label className="example-picker">
+                Ontology example
+                <select aria-label="Ontology example" disabled={!!busy}
+                  value={activeExample?.source === source && activeExample.root === root ? exampleId : ""}
+                  onChange={e => loadExample(e.target.value)}>
+                  <option value="" disabled>Choose an example…</option>
+                  {ontologyExamples.map(example => <option key={example.id} value={example.id}>{example.title}</option>)}
+                </select>
+              </label>
               <div className="source-editor">
                 <Editor
                   value={source}
@@ -836,6 +867,21 @@ function App() {
                 </button>
               </div>
             </div>
+            <label className="example-picker">
+              Query example
+              <select aria-label="Query example" disabled={!!busy || !activeExample}
+                value={activeExample?.queries.find(example => example.source === query)?.title ?? ""}
+                onChange={e => {
+                  const example = activeExample?.queries.find(example => example.title === e.target.value);
+                  if (!example) return;
+                  setQuery(example.source);
+                  setOutput(null);
+                  setErrors(previous => ({ ...previous, selector: "" }));
+                }}>
+                <option value="" disabled>{activeExample ? "Choose a query…" : "Load an ontology example first"}</option>
+                {activeExample?.queries.map(example => <option key={example.title} value={example.title}>{example.title}</option>)}
+              </select>
+            </label>
             <div className="query-editor">
               <Editor
                 value={query}
