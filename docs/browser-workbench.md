@@ -11,6 +11,9 @@ results retain PostgreSQL's JSON text, including exact decimals.
 
 ## Build
 
+The reproducible cross-build currently runs on x86_64 Linux (including CI).
+The published workbench only requires a modern browser.
+
 Install Node.js 22+, Python, curl, jq, unzip and zstd, then:
 
 ```sh

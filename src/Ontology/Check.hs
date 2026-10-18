@@ -3,7 +3,8 @@ module Ontology.Check
   , ontologySummary
   ) where
 
-import Control.Monad.State.Strict
+import Control.Monad (foldM, forM, forM_, unless, when)
+import Control.Monad.State.Strict (StateT, execStateT, gets, modify', lift)
 import qualified Data.Map.Strict as M
 import qualified Data.Set as S
 import Data.List (find, nub)
